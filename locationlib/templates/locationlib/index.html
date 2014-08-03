@@ -1,0 +1,44 @@
+<html>
+<head>
+	<title>Pushpin'd | Recent Places</title>
+	<meta name='description' content='displays list of recently added locations'/>
+
+	<!-- jQuery, Bootstrap, and styling -->
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/style.css'%}" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
+</head>
+
+<body>
+	<div id='page-header'>
+		<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
+		<a href="{% url 'locationlib:new' %}">create new location</a>
+	</div>
+		
+	<div id='recent-places'>
+		<div id='recent-places-header'>
+			<h2>Recently Saved Places</h2>
+		</div>
+		{% if location_list %}
+			<ul>
+			{% for location in location_list %}
+				<li>
+					<a href="{% url 'locationlib:detail' location.id %}">
+					{% if location.custName == '' %}
+						{{ location.name }}
+					{% else %}
+						{{ location.custName }} ({{ location.name }})
+					{% endif %}
+					</a>
+				</li>
+			{% endfor %}
+			</ul>
+
+		{% else %}
+			<p>No places saved!</p>
+		{% endif %}
+	</div>
+</body>
+</html>

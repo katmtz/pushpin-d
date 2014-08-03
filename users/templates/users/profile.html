@@ -1,0 +1,17 @@
+<head>
+	<title>pushpin'd | {{user}}</title>
+	<meta name='description' content="displays a particular user's profile" />
+
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="static/style.css" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
+</head>
+
+<body>
+	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
+	<p>this is {{profile.firstName}}'s account.</p>
+	<p>{{profile.firstName}}'s username is {{user}}.</p>
+	<p>click <a href='{% url "users:places" user.id %}'>here</a> to see their locations</p>
+</body>

@@ -1,0 +1,19 @@
+<head>
+	<title>Pushpin'd | New Place</title>
+	<meta name="description" content="displays form for manually adding a new location" />
+</head>
+
+<body>
+	<div id='page-header'>
+		<h1>Pushpin'd</h1>
+		<a href="{% url 'locationlib:index' %}">index</a>
+	</div>
+
+	<div id='new-location-form'>
+		<form action="{% url 'locationlib:savenew' %}" method="post">
+			{% csrf_token %}
+			{{ form }}
+			<input type='submit' value='Save'>
+		</form>
+	</div>
+</body>

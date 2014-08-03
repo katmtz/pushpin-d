@@ -1,0 +1,15 @@
+<head>
+	<title>pushpin'd | Edit Profile</title>
+	<meta name='description' content='displays form for editing profile information' />
+
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="static/style.css" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
+</head>
+
+<body>
+	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
+	<p>You are supposed to be editing <a href='{% url "users:profile" {{user.id}} %}'>{{profile.firstName}}'s</a> profile right now.</p>
+</body>

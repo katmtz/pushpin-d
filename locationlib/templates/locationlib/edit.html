@@ -1,0 +1,31 @@
+<head>
+	<title>{{ location.name }} | Edit Info</title>
+	<meta name='description' content='displays form for editing location information'/>
+</head>
+
+<body>
+	<div id='page-header'>
+		<h1>Pushpin'd</h1>
+		<a href="{% url 'locationlib:index' %}">index</a>
+	</div>
+
+	<div id="page-description">
+		<p>Use this page to edit the name and description displayed for {{ location.name }}.</p>
+	</div>
+
+	<div id='edit-form'>
+		<form action="{% url 'locationlib:save' location.id %}" method="post">
+			{% csrf_token %}
+			Name: <input type="text" name="name" value="{{ location.custName }}"><br>
+			Description: <textarea name="description" rows="10" cols="40" maxlength='500'>{{ location.custDescription }}</textarea><br>
+			<input type="submit" value="Save Changes">
+		</form>
+	</div>
+
+	<div id='delete-button'>
+		<form action="{% url 'locationlib:delete' location.id %}" method="post">
+		{% csrf_token %}
+		<input type='submit' value='Delete this place.'>
+		</form>
+	</div>
+</body>

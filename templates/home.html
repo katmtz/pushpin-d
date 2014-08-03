@@ -1,0 +1,53 @@
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>pushpin'd | Home</title>
+
+	<!-- jQuery, Bootstrap, and styling -->
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="static/style.css" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
+</head>
+
+<body class="home">
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	    <div class="container">
+	        <div class="navbar-header">
+	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            </button>
+	            <a class="navbar-brand" href="/">pushpin'd</a>
+	        </div>
+	        {% if not loggedin %}
+		        <div class="navbar-collapse collapse">
+		          <form class="navbar-form navbar-right" role="form" action="{% url 'authenticator' %}" method="POST">
+		            <div id="mini-login" class="form-group">
+						{% csrf_token %}
+						<input type='text' placeholder="Username" name="username" class="form-control">
+						<input type='password' placeholder="Password" name="password" class="form-control">
+						<input type='Submit' value='Log In' class="btn btn-success">
+					</div>
+		          </form>
+		        </div><!--/.navbar-collapse -->
+		    {% else %}
+		    	<span>Logged in as <a href='{% url "users:profile" request.user.id %}'>{{request.user}}</a></span>
+		    	<span><a href='{% url "logout" %}'>Log out</a></span>
+		    {% endif %}
+	    </div>
+	</div>
+
+	<div class="jumbotron">
+      <div class="container" id="home-jumbotron">
+        <h1>Welcome to pushpin'd!</h1>
+        <p>Looking for a better way to remember all the best places to eat, play, hang out, or just take in the view? What if you could do that and more with just a click ofa button. When you start using pushpin'd, it's easy to save, organize, and share all your favorite spots, anywhere in the world! Let pushpin'd do the work for you, so you can stop wondering where to go and start having more fun!</p>
+        <p><a class="btn btn-primary btn-lg" role="button" href='{% url "signup" %}'>Sign up! &raquo;</a></p>
+      </div>
+    </div>
+
+</body>

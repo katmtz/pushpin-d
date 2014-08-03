@@ -1,0 +1,46 @@
+<head>
+	<title>Pushpin'd | Sign Up!</title>
+
+	<!-- jQuery, Bootstrap, and styling -->
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="{% static 'style.css' %}" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
+</head>
+
+<body id="body-signup">
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	    <div class="container">
+	        <div class="navbar-header">
+	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            </button>
+	            <a class="navbar-brand" href="{% url 'home' %}">pushpin'd</a>
+	        </div>
+	    </div>
+	</div>
+
+	<div class="container">
+		<form action='{% url "createUser" %}' method="POST" class='form-signin' role='form'>
+			<h2 class="form-signin-heading">Sign up for pushpin'd!</h2>
+			{% csrf_token %}
+			<label for="id_username" type="text">Username:</label>
+				<input id="id_username" type="text" name="username" class="form-control" required autofocus>
+			<label for="id_email" type="text">Email:</label>
+				<input id="id_email" type="email" name="email" class="form-control" required>
+			<label for="id_password1" type="text">Password:</label>
+				<input id="id_password1" type="password" name="password1" class="form-control" required>
+			<label for="id_password2" type='text'>Confirm Password:</label>
+				<input id="id_password2" type="password" name='password2' class='form-control' required>
+			<input type="submit" value="Sign up!"> 
+		</form>
+	<div>
+
+	<div id="signup-login-swap">
+		<p>Already a user? <a href='{% url "userLogin" %}'>Log in here!</a></p>
+	</div>
+</body>

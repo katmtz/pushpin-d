@@ -1,0 +1,42 @@
+<html>
+<head>
+	<title>{{ location }} | Details</title>
+	<meta name='description' content='displays detailed information about a particular location'/>
+
+	<!-- jQuery, Bootstrap, and styling -->
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.min.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/style.css'%}" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
+</head>
+
+<body>
+	<div id='page-header'>
+		<h1>pushpin'd</h1>
+		<a href='{% url 'locationlib:index' %}'>index</a>
+	</div>
+
+	<div id='location-info'>
+		<div id='location-info-header'>
+		<h2>{{ location.name }}</h2>
+		<h3>{{ location.custName }}</h3>
+		</div>
+		<div id='location-info-content'>
+		<table>
+			<tr>
+				<td>Coordinates</td>
+				<td>{{ location.getCoordinates }}</td>
+			</tr>
+			{% if location.custDescription != '' %}
+			<tr>
+				<td>About</td>
+				<td>{{ location.custDescription }}</td>
+			</tr>
+			{% endif %}
+		</table>
+		</div>
+		<a href="{% url 'locationlib:edit' location.id %}">edit info</a> 
+	</div>
+</body>
+</html>
