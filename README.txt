@@ -61,6 +61,7 @@ pushpin/
 		__init__.py
 		admin.py
 		models.py
+		forms.py
 		tests.py
 		urls.py
 		views.py
