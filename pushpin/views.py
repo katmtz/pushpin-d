@@ -57,4 +57,4 @@ def authenticator(request):
 
 def userLogout(request):
 	logout(request)
-	HttpResponseRedirect(reverse('home'))
+	return HttpResponseRedirect(reverse('home'))

@@ -11,7 +11,21 @@
 
 <body>
 	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
-	<p>this is {{profile.firstName}}'s account.</p>
-	<p>{{profile.firstName}}'s username is {{user}}.</p>
+	{% if profile.firstName != '' %}
+		<p>this is {{profile.firstName}}'s account.</p>
+		<p>{{profile.firstName}}'s username is {{user}}.</p>
+	{% else %}
+		<p>this is {{user}}'s account.</p>
+	{% endif %}
 	<p>click <a href='{% url "users:places" user.id %}'>here</a> to see their locations</p>
+	{% if profile.firstName != '' %}
+	<p>About {{profile.firstName}}</p>
+	{% else %}
+	<p>About {{user}}</p>
+	{% endif %}
+	<p>{{profile.about}}</p>
+
+	{% if user == request.user %}
+	<p>This is your profile! Click <a href="{% url 'users:edit' request.user.id %}">here</a> to edit</p>
+	{% endif %}
 </body>

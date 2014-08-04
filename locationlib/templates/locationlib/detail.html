@@ -14,7 +14,7 @@
 <body>
 	<div id='page-header'>
 		<h1>pushpin'd</h1>
-		<a href='{% url 'locationlib:index' %}'>index</a>
+		<a href='{% url "users:places" user.id %}'>back to places</a>
 	</div>
 
 	<div id='location-info'>
@@ -36,7 +36,9 @@
 			{% endif %}
 		</table>
 		</div>
+		{% if request.user == location.user %}
 		<a href="{% url 'locationlib:edit' location.id %}">edit info</a> 
+		{% endif %}
 	</div>
 </body>
 </html>

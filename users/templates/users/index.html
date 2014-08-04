@@ -11,18 +11,33 @@
 
 <body>
 	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
+
+	{% if profile.firstName != '' %}
 	<p>This is a list of <a href='{% url "users:profile" user.id %}'>{{ profile.firstName}}'s</a> saved locations</p><br>
+	{% else %}
+	<p>This is a list of <a href='{% url "users:profile" user.id %}'>{{user}}'s</a> saved locations</p><br>
+	{% endif %}
+	{% if user == request.user %}
+	<p>These are your saved places!</p>
+	{% endif %}
+	
 	{% if location_list %}
 		<ul>
 		{% for location in location_list %}
-			<li>Location Name:{{location.name}}</li>
+			<li><a href="{% url 'locationlib:detail' location.id %}">{{location.name}}</a></li>
 				<ul>
 					<li>Coordinates: {{location.getCoordinates}}</li>
 					<li>{{location.custDescription}}</li>
 				</ul>
 		{% endfor %}
+		{% if user == request.user %}
+			<li><a href="{% url 'users:add' user.id %}">add new place?</a>
+		{% endif %}
 		</ul>
 	{% else %}
-		<p>no locations saved! :(</p>
+		<p>no places saved! :(</p>
+		{% if user == request.user %}
+		<a href="{% url 'users:add' user.id %}">add a new place?</a>
+		{% endif %}
 	{% endif %}
 </body>

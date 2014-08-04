@@ -1,12 +1,18 @@
 <head>
 	<title>{{ location.name }} | Edit Info</title>
 	<meta name='description' content='displays form for editing location information'/>
+	<!-- jQuery, Bootstrap, and styling -->
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.min.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/style.css'%}" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
 </head>
 
 <body>
 	<div id='page-header'>
-		<h1>Pushpin'd</h1>
-		<a href="{% url 'locationlib:index' %}">index</a>
+		<h1><a href="{% url 'home' %}">Pushpin'd</h1>
+		<a href="{% url 'users:places' request.user.id %}">back to places</a>
 	</div>
 
 	<div id="page-description">

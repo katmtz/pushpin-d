@@ -1,18 +1,32 @@
 <head>
 	<title>Pushpin'd | New Place</title>
 	<meta name="description" content="displays form for manually adding a new location" />
+
+	<!-- jQuery, Bootstrap, and styling -->
+	{% load staticfiles %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='{% static "locationlib/bootstrap.min.js" %}'></script>
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/style.css'%}" />
+	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
 </head>
 
 <body>
 	<div id='page-header'>
-		<h1>Pushpin'd</h1>
-		<a href="{% url 'locationlib:index' %}">index</a>
+		<h1><a href="{% url 'home' %}">Pushpin'd</h1>
+		<a href="{% url 'users:places' request.user.id %}">back to places</a>
 	</div>
 
 	<div id='new-location-form'>
 		<form action="{% url 'locationlib:savenew' %}" method="post">
 			{% csrf_token %}
-			{{ form }}
+			<p><label for="id_name">Name:</label> <input id="id_name" maxlength="70" name="name" type="text" /></p>
+			<p><select id="id_user" name="user" style="display:none">
+			<option value="{{request.user.id}}" selected="selected">{{request.user}}</option>
+			</select></p>
+			<p><label for="id_longitude">Longitude:</label> <input id="id_longitude" name="longitude" step="0.0001" type="number" /></p>
+			<p><label for="id_latitude">Latitude:</label> <input id="id_latitude" name="latitude" step="0.0001" type="number" /></p>
+			<p><label for="id_custDescription">Description:</label> <textarea id="id_custDescription" maxlength="500" name="custDescription" /></textarea></p>
+
 			<input type='submit' value='Save'>
 		</form>
 	</div>

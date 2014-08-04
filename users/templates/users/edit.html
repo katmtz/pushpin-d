@@ -11,5 +11,27 @@
 
 <body>
 	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
-	<p>You are supposed to be editing <a href='{% url "users:profile" {{user.id}} %}'>{{profile.firstName}}'s</a> profile right now.</p>
+	<p>You are editing 
+		<a href='{% url "users:profile" user.id %}'>
+			{% if profile.firstName != ''%}
+				{{profile.firstName}}'s
+			{% else %}
+				{{user}}'s
+			{% endif %}
+		</a> profile right now.
+	</p>
+
+	<!-- Profile edit form -->
+	<form action='{% url "users:save" user.id %}' method = "post">
+		{% csrf_token %}
+		<p><label for="id_firstName">First Name:</label> <input id="id_firstName" maxlength="50" name="firstName" type="text" /></p>
+		<p><label for="id_lastName">Last Name:</label> <input id="id_lastName" maxlength="50" name="lastName" type="text" /></p>
+		<p><label for="id_about">About:</label> <textarea id="id_about" maxlength="500" name="about" type="text"></textarea></p>
+		<p><select id="id_user" name="user" style='display:none'>
+		<option value="{{user.id}}" selected="selected">{{user}}</option>
+		</select>
+		</p>
+		<input type='submit' value="Save Changes">
+	</form>
+
 </body>

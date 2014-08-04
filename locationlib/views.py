@@ -15,23 +15,36 @@ def index(request):
 	return render(request, 'locationlib/index.html', context)
 
 def new(request):
-	form = LocationForm().as_ul()
-	print form
-	return render(request, 'locationlib/new.html', {'form':form})
+	form = LocationForm().as_p()
+	context = {
+		"form":form,
+		"request":request,
+	}
+	return render(request, 'locationlib/new.html', context)
 	
 def detail(request, location_id):
 	# displays info about particular location
 	location = get_object_or_404(Location, pk=location_id)
-	return render(request, 'locationlib/detail.html', {'location':location})
+	context = {
+		'location':location,
+		'user':location.user,
+		'request':request,
+	}
+	return render(request, 'locationlib/detail.html', context)
 
 def edit(request,location_id):
 	# displays information edit form
 	location = get_object_or_404(Location, pk=location_id)
-	return render(request, 'locationlib/edit.html', {'location':location})
+	context = {
+		'location':location,
+		'request':request
+	}
+	return render(request, 'locationlib/edit.html', context)
 
 def save(request, location_id):
 	# saves changes from edit form
 	l = get_object_or_404(Location, pk=location_id)
+	# uses TRY/EXCEPT method.. switch to form.is_valid() later
 	try:
 		l.custName = request.POST['name']
 		l.custDescription = request.POST['description']
@@ -57,6 +70,7 @@ def savenew(request):
 			print '**OK**'
 			return HttpResponseRedirect(reverse('locationlib:detail', args=[newLocation.id]))
 		print 'form invalid'
+		print form
 		print '**OK**'
 		return render(request, 'locationlib/new.html', {'form': form})
 	else:
@@ -68,4 +82,4 @@ def savenew(request):
 def delete(request, location_id):
 	l = get_object_or_404(Location, pk=location_id)
 	l.delete()
-	return HttpResponseRedirect(reverse('locationlib:index'))
+	return HttpResponseRedirect(reverse('users:places', args=[request.user.id]))
