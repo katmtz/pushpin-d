@@ -58,7 +58,8 @@ def places_index(request,user_id):
 		'user':user,
 		'profile':userProfile,
 		'location_list':location_list,
-		'request':request
+		'request':request,
+		'loggedin': user.is_authenticated(),
 	}
 	return render(request, 'users/index.html', context)
 

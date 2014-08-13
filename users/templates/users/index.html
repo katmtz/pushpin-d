@@ -4,40 +4,157 @@
 
 	{% load staticfiles %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src='{% static "locationlib/bootstrap.js" %}'></script>
-	<link rel="stylesheet" type='text/css' href="static/style.css" />
+	<script src='{% static "locationlib/bootstrap.min.js" %}'></script>
+	<script type="text/javascript"
+      		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7Lch5ls1gG_axoxz9elNrJAvxXlM2abc">
+    	</script>
+	<script>
+		var map;
+		var markers = [];
+		
+		function initialize() {
+			
+			var center = new google.maps.LatLng(parseFloat('{{location_list.0.latitude}}'),parseFloat('{{location_list.0.longitude}}'));
+
+			/*var center = new google.maps.LatLng(34.0594,-118.2459)*/
+			console.log('var center set: ({{location_list.0.longitude}},{{location_list.0.latitude}})');
+
+			/*var listLength = ParseInt('{{location_list|length}}');*/
+
+			console.log('var listLength set');
+
+			mapOptions = {
+				zoom:12,
+				center:center
+			};
+
+			var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			console.log('var map set');
+			
+			{% for location in location_list %}
+				position = new google.maps.LatLng(parseFloat('{{location.latitude}}'),parseFloat('{{location.longitude}}'));
+				name = "{{location.name}}"
+				addMarker(position,name);
+			{% endfor %}
+			setMapAll(map)
+
+			console.log('location markers set');
+		}
+
+		function addMarker(position,name) {
+			// adds a new marker and pushes it to the array
+			var marker = new google.maps.Marker({
+				position: position,
+				map: map,
+				title:name,
+			});
+			markers.push(marker);
+		}
+
+		function setMapAll(map) {
+			for (var i=0; i <= markers.length; i++) {
+				markers[i].setMap(map);
+				infoWindows[i].setMap(map);
+			};
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+	<link rel="stylesheet" type='text/css' href="{% static 'users/style.css' %}" />
 	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
 </head>
 
 <body>
-	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	    <div class="container">
+	        <div class="navbar-header">
+	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            </button>
+	            <a class="navbar-brand" href="/">pushpin'd</a>
+	        </div>
+	        <div class="navbar-collapse collapse">
+		        <ul class="nav navbar-nav">
+		            <li class="active"><a href="{% url 'home' %}">Home</a></li>
+		            <li><a href="#about">About</a></li>
+		            <li><a href="#contact">Contact</a></li>
+		            {% if loggedin %}
+		            	<li class="dropdown">
+		            		<a href='#' class="dropdown-toggle" data-toggle="dropdown">You <span class="caret"></span></a>
+			            	<ul class="dropdown-menu" role="menu">
+				                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
+				                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
+				                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+				            </ul>
+				        </li>
+		            {% endif %}
+		        </ul>
+	        	{% if not loggedin %}
+		        	<form class="navbar-form navbar-right" role="form" action="{% url 'authenticator' %}" method="POST">
+			            <div id="mini-login" class="form-group">
+							{% csrf_token %}
+							<input type='text' placeholder="Username" name="username" class="form-control">
+							<input type='password' placeholder="Password" name="password" class="form-control">
+							<input type='Submit' value='Log In' class="btn btn-success">
+						</div>
+		            </form>
+	            {% else %}
+	            	<ul class="nav navbar-nav navbar-right">
+			    		<li><a href='{% url "logout" %}' >Log out</a></li>
+			    	</ul>
+			    {% endif %}
+		    </div><!--/.navbar-collapse -->
+	    </div>
+	</div>
 
-	{% if profile.firstName != '' %}
-	<p>This is a list of <a href='{% url "users:profile" user.id %}'>{{ profile.firstName}}'s</a> saved locations</p><br>
-	{% else %}
-	<p>This is a list of <a href='{% url "users:profile" user.id %}'>{{user}}'s</a> saved locations</p><br>
-	{% endif %}
-	{% if user == request.user %}
-	<p>These are your saved places!</p>
-	{% endif %}
-	
-	{% if location_list %}
-		<ul>
-		{% for location in location_list %}
-			<li><a href="{% url 'locationlib:detail' location.id %}">{{location.name}}</a></li>
-				<ul>
-					<li>Coordinates: {{location.getCoordinates}}</li>
-					<li>{{location.custDescription}}</li>
-				</ul>
-		{% endfor %}
-		{% if user == request.user %}
-			<li><a href="{% url 'users:add' user.id %}">add new place?</a>
-		{% endif %}
-		</ul>
-	{% else %}
-		<p>no places saved! :(</p>
-		{% if user == request.user %}
-		<a href="{% url 'users:add' user.id %}">add a new place?</a>
-		{% endif %}
-	{% endif %}
+	<div class="container" id='location-sidebar'>
+		<div id="location-list-header">
+			<br>
+			<h4>   
+			{% if user.id != request.user.id %}
+				{% if profile.firstName != '' %}
+				<a href='{% url "users:profile" user.id %}'>{{ profile.firstName}}'s</a> Saved Places
+				{% else %}
+				<a href='{% url "users:profile" user.id %}'>{{user}}'s</a> Saved Places
+				{% endif %}
+			{% else %}
+				<a href="{% url 'users:profile' user.id %}">Your</a> Saved Places
+			{% endif %}
+			</h4>
+		</div>
+
+		<div class="container" id="location-list">
+			<div class="list-group">
+				{% if location_list %}
+					{% for location in location_list %}
+						<a class="list-group-item" href="{% url 'locationlib:detail' location.id %}">
+							<div class="container" id="item-container">
+								<h4 class="list-group-item-header">{{location.name}}</h4></li>
+								<p class="list-group-item-text">{{location.custDescription}}</p>
+							</div>
+						</a>
+					{% endfor %}
+					{% if user == request.user %}
+						<a class="list-group-item" href="{% url 'users:add' user.id %}">
+							<div class="container">
+								<h4 class="list-group-item-text"><span class="glyphicon glyphicon-plus"></span> Add New Place?</h4><br>
+							</div>
+						</a>
+					{% endif %}
+					</ul>
+				{% else %}
+					<p>no places saved! :(</p>
+					{% if user == request.user %}
+					<a href="{% url 'users:add' user.id %}">add a new place?</a>
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	<div id="map-canvas"></div>
 </body>

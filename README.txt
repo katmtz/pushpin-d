@@ -6,6 +6,7 @@ Things used to make pushpin'd better:
 -Django
 -Bootstrap
 -jQuery (duh)
+-Google Maps Javascript API
 
 Pushpin'd Project Directory:
 
@@ -52,6 +53,10 @@ pushpin/
 		signup.html
 
 	users/ (app)
+		static/
+			users/
+				map-script.js (redundant)
+				style.css
 		templates/
 			users/
 				edit.html

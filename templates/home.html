@@ -7,7 +7,59 @@
 	<!-- jQuery, Bootstrap, and styling -->
 	{% load staticfiles %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src='{% static "locationlib/bootstrap.js" %}'></script>
+	<script src='{% static "locationlib/bootstrap.min.js" %}'></script>
+	<script>
+		var map;
+		var markers = [];
+		
+		function initialize() {
+			
+			var center = new google.maps.LatLng(parseFloat('{{location_list.0.latitude}}'),parseFloat('{{location_list.0.longitude}}'));
+
+			/*var center = new google.maps.LatLng(34.0594,-118.2459)*/
+			console.log('var center set: ({{location_list.0.longitude}},{{location_list.0.latitude}})');
+
+			/*var listLength = ParseInt('{{location_list|length}}');*/
+
+			console.log('var listLength set');
+
+			mapOptions = {
+				zoom:12,
+				center:center
+			};
+
+			var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			console.log('var map set');
+			
+			{% for location in location_list %}
+				position = new google.maps.LatLng(parseFloat('{{location.latitude}}'),parseFloat('{{location.longitude}}'));
+				name = "{{location.name}}"
+				addMarker(position,name);
+			{% endfor %}
+			setMapAll(map)
+
+			console.log('location markers set');
+		}
+
+		function addMarker(position,name) {
+			// adds a new marker and pushes it to the array
+			var marker = new google.maps.Marker({
+				position: position,
+				map: map,
+				title:name,
+			});
+			markers.push(marker);
+		}
+
+		function setMapAll(map) {
+			for (var i=0; i <= markers.length; i++) {
+				markers[i].setMap(map);
+				infoWindows[i].setMap(map);
+			};
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
 	<link rel="stylesheet" type='text/css' href="static/style.css" />
 	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
 </head>
@@ -24,24 +76,41 @@
 	            </button>
 	            <a class="navbar-brand" href="/">pushpin'd</a>
 	        </div>
-	        {% if not loggedin %}
-		        <div class="navbar-collapse collapse">
-		          <form class="navbar-form navbar-right" role="form" action="{% url 'authenticator' %}" method="POST">
-		            <div id="mini-login" class="form-group">
-						{% csrf_token %}
-						<input type='text' placeholder="Username" name="username" class="form-control">
-						<input type='password' placeholder="Password" name="password" class="form-control">
-						<input type='Submit' value='Log In' class="btn btn-success">
-					</div>
-		          </form>
-		        </div><!--/.navbar-collapse -->
-		    {% else %}
-		    	<span>Logged in as <a href='{% url "users:profile" request.user.id %}'>{{request.user}}</a></span>
-		    	<span><a href='{% url "logout" %}'>Log out</a></span>
-		    {% endif %}
+	        <div class="navbar-collapse collapse">
+		        <ul class="nav navbar-nav">
+		            <li class="active"><a href="{% url 'home' %}">Home</a></li>
+		            <li><a href="#about">About</a></li>
+		            <li><a href="#contact">Contact</a></li>
+		            {% if loggedin %}
+		            	<li class="dropdown">
+		            		<a href='#' class="dropdown-toggle" data-toggle="dropdown">You <span class="caret"></span></a>
+			            	<ul class="dropdown-menu" role="menu">
+				                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
+				                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
+				                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+				            </ul>
+				        </li>
+		            {% endif %}
+		        </ul>
+	        	{% if not loggedin %}
+		        	<form class="navbar-form navbar-right" role="form" action="{% url 'authenticator' %}" method="POST">
+			            <div id="mini-login" class="form-group">
+							{% csrf_token %}
+							<input type='text' placeholder="Username" name="username" class="form-control">
+							<input type='password' placeholder="Password" name="password" class="form-control">
+							<input type='Submit' value='Log In' class="btn btn-success">
+						</div>
+		            </form>
+	            {% else %}
+	            	<ul class="nav navbar-nav navbar-right">
+			    		<li><a href='{% url "logout" %}' >Log out</a></li>
+			    	</ul>
+			    {% endif %}
+		    </div><!--/.navbar-collapse -->
 	    </div>
 	</div>
 
+	{% if not loggedin %}
 	<div class="jumbotron">
       <div class="container" id="home-jumbotron">
         <h1>Welcome to pushpin'd!</h1>
@@ -49,5 +118,8 @@
         <p><a class="btn btn-primary btn-lg" role="button" href='{% url "signup" %}'>Sign up! &raquo;</a></p>
       </div>
     </div>
+    {% else %}
+    <div id='map-canvas'>
+    {% endif %}
 
 </body>

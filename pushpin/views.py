@@ -10,7 +10,11 @@ from users.models import Profile
 
 def home(request):
 	loggedin = request.user.is_authenticated()
-	return render(request, 'home.html', {'loggedin':loggedin, 'request':request})
+	context = {
+		'loggedin':loggedin,
+		'request':request
+	}
+	return render(request, 'home.html', context)
 
 def signup(request):
 	form = NewUserForm().as_ul()
