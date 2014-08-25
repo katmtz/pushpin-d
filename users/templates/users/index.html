@@ -89,6 +89,7 @@
 				                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
 				                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
 				                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+				                <li><a href="{% url 'users:edit' request.user.id  %}">Edit Profile</a></li>
 				            </ul>
 				        </li>
 		            {% endif %}

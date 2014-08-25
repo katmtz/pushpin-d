@@ -5,33 +5,60 @@
 	{% load staticfiles %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src='{% static "locationlib/bootstrap.js" %}'></script>
-	<link rel="stylesheet" type='text/css' href="static/style.css" />
+	<link rel="stylesheet" type='text/css' href="{% static 'users/style.css' %}" />
 	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
 </head>
 
 <body>
-	<h1><a href="{% url 'home' %}">Pushpin'd</a></h1>
-	<p>You are editing 
-		<a href='{% url "users:profile" user.id %}'>
-			{% if profile.firstName != ''%}
-				{{profile.firstName}}'s
-			{% else %}
-				{{user}}'s
-			{% endif %}
-		</a> profile right now.
-	</p>
+	<!-- Header -->
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	    <div class="container">
+	        <div class="navbar-header">
+	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            </button>
+	            <a class="navbar-brand" href="/">pushpin'd</a>
+	        </div>
+	        <div class="navbar-collapse collapse">
+		        <ul class="nav navbar-nav">
+		            <li><a href="{% url 'home' %}">Home</a></li>
+		            <li><a href="#about">About</a></li>
+		            <li><a href="#contact">Contact</a></li>
+	            	<li class="dropdown active">
+	            		<a href='#' class="dropdown-toggle" data-toggle="dropdown">You <span class="caret"></span></a>
+		            	<ul class="dropdown-menu" role="menu">
+			                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
+			                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
+			                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+			                <li><a href="{% url 'users:edit' request.user.id  %}">Edit Profile</a></li>
+			            </ul>
+			        </li>    
+		        </ul>
+            	<ul class="nav navbar-nav navbar-right">
+		    		<li><a href='{% url "logout" %}' >Log out</a></li>
+		    	</ul>
+		    </div><!--/.navbar-collapse -->
+	    </div>
+	</div>
 
 	<!-- Profile edit form -->
-	<form action='{% url "users:save" user.id %}' method = "post">
-		{% csrf_token %}
-		<p><label for="id_firstName">First Name:</label> <input id="id_firstName" maxlength="50" name="firstName" type="text" /></p>
-		<p><label for="id_lastName">Last Name:</label> <input id="id_lastName" maxlength="50" name="lastName" type="text" /></p>
-		<p><label for="id_about">About:</label> <textarea id="id_about" maxlength="500" name="about" type="text"></textarea></p>
-		<p><select id="id_user" name="user" style='display:none'>
-		<option value="{{user.id}}" selected="selected">{{user}}</option>
-		</select>
-		</p>
-		<input type='submit' value="Save Changes">
-	</form>
-
+	<div class="container" id="profile-edit-form">
+		<h2><b><span class='glyphicon glyphicon-pencil'></span> Edit your profile.</b></h2>
+		<form action='{% url "users:save" user.id %}' method = "post">
+			{% csrf_token %}
+			<label for="id_firstName">First Name:</label><br> 
+			<input id="id_firstName" maxlength="50" name="firstName" type="text" value='{{profile.firstName}}' class='form-control' /><br>
+			<label for="id_lastName">Last Name:</label><br>
+			<input id="id_lastName" maxlength="50" name="lastName" type="text" value='{{profile.lastName}}' class="form-control" /><br>
+			<label for="id_about">About:</label> <br>
+			<textarea id="id_about" maxlength="500" name="about" type="text" class="form-control">{{profile.about}}</textarea><br>
+			<select id="id_user" name="user" style='display:none'>
+			<option value="{{user.id}}" selected="selected">{{user}}</option>
+			</select>
+			<input type='submit' value="Save Changes" class="btn btn-lg btn-primary btn-block">
+		</form>
+	</div>
 </body>

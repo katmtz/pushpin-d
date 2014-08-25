@@ -165,6 +165,7 @@
 				                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
 				                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
 				                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+				                <li><a href="{% url 'users:edit' request.user.id  %}">Edit Profile</a></li>
 				            </ul>
 				        </li>
 		            {% endif %}
@@ -189,7 +190,7 @@
 	
 	<!-- Sign up Jumbotron -->
 	{% if not loggedin %}
-	<div class="jumbotron">
+	<div class="jumbotron">O
       <div class="container" id="home-jumbotron">
         <h1>Welcome to pushpin'd!</h1>
         <p>Looking for a better way to remember all the best places to eat, play, hang out, or just take in the view? What if you could do that and more with just a click of a button. When you start using pushpin'd, it's easy to save, organize, and share all your favorite spots, anywhere in the world! Let pushpin'd do the work for you, so you can stop wondering where to go and start having more fun!</p>

@@ -33,6 +33,7 @@
 				                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
 				                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
 				                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+				                <li><a href="{% url 'users:edit' request.user.id  %}">Edit Profile</a></li>
 				            </ul>
 				        </li>
 		            {% endif %}
@@ -75,16 +76,13 @@
 	</div>
 
 	<div class="container" id="profile-about">
-		<p>About</p>
-		<div class=''>
-			<p>{{profile.about}}</p>
-		</div>
+		<p>{{profile.about}}</p>
 	</div>
 
 	{% if user == request.user %}
 		<div class='container' id='profile-edit-link'>
 			<div class=''>
-				<a href="{% url 'users:edit' request.user.id %}">edit profile</a>
+				<a href="{% url 'users:edit' request.user.id %}"><span class='glyphicon glyphicon-pencil'></span> edit profile</a>
 			</div>
 		</div>
 	{% endif %}
@@ -103,6 +101,12 @@
 				{% endfor %}
 			</div>
 		</div>
+
+	<div class='container' id="profile-more-locations">
+		<div class="well well-sm">
+			<a href="{% url 'users:places' user.id %}">See all their saved places!</a>
+		</div>
+	</div>
 
 	{% else %}
 		<div class='container' id='profile-no-locations'>

@@ -34,6 +34,7 @@ def edit(request, user_id): # page
 		'profile':userProfile, 
 		'user':user, 
 		'form':form,
+		'request':request,
 	}
 	return render(request, 'users/edit.html', context)
 
@@ -44,9 +45,7 @@ def save(request, user_id): # action
 	if request.method == 'POST':
 		form = ProfileForm(request.POST,instance=userProfile)
 		if form.is_valid():
-			print form
 			form.save()
-			print "form saved!"
 			return HttpResponseRedirect(reverse('users:profile', args=[user_id]))
 		else:
 			
