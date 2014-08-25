@@ -19,6 +19,8 @@ def profile(request, user_id): # page
 		'user':user,
 		'profile':userProfile,
 		'request':request,
+		'recent_location_list': userProfile.get_locations()[:5],
+		'loggedin':user.is_authenticated(),
 	}
 	return render(request, 'users/profile.html', context) 
 

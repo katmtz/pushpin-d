@@ -4,63 +4,140 @@
 
 	<title>pushpin'd | Home</title>
 
-	<!-- jQuery, Bootstrap, and styling -->
+	<!-- jQuery, Bootstrap, Google API Key, and styling -->
 	{% load staticfiles %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src='{% static "locationlib/bootstrap.min.js" %}'></script>
+	<script type="text/javascript"
+      		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7Lch5ls1gG_axoxz9elNrJAvxXlM2abc">
+    	</script>
 	<script>
 		var map;
+		var location;
+		var service;
+		var losangeles = new google.maps.LatLng(34.0576,-118.2508);
+		var browserSupportFlag = new Boolean();
 		var markers = [];
-		
+
 		function initialize() {
-			
-			var center = new google.maps.LatLng(parseFloat('{{location_list.0.latitude}}'),parseFloat('{{location_list.0.longitude}}'));
-
-			/*var center = new google.maps.LatLng(34.0594,-118.2459)*/
-			console.log('var center set: ({{location_list.0.longitude}},{{location_list.0.latitude}})');
-
-			/*var listLength = ParseInt('{{location_list|length}}');*/
-
-			console.log('var listLength set');
-
+			// load map, load click listener
 			mapOptions = {
 				zoom:12,
-				center:center
 			};
 
 			var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-			console.log('var map set');
-			
-			{% for location in location_list %}
-				position = new google.maps.LatLng(parseFloat('{{location.latitude}}'),parseFloat('{{location.longitude}}'));
-				name = "{{location.name}}"
-				addMarker(position,name);
-			{% endfor %}
-			setMapAll(map)
+			// Try W3C Geolocation
+			if (navigator.geolocation) {
+				browserSupportFlag = True;
+				navigator.geolocation.getCurrentPosition(function(position) {
+					location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+					map.setCenter(location);
+					addMarker(location);
+				}, function() {
+					browserSupportFlag = false;
+					handleNoGeolocation(browserSupportFlag);
+				});
+			}
 
-			console.log('location markers set');
+			google.maps.event.addListener(map, 'click', loadClick(event));
+			
 		}
 
-		function addMarker(position,name) {
+		function loadClick(event) {
+			// clear map if needed
+			if (markers != []) {
+				setAllMap(null);
+			}
+			// create new marker
+			addMarker(event.latLng);
+			// render marker on map
+			setAllMap(map);
+			// update form
+			var name = getName(event.latLng);
+			var form = '
+				{% csrf_token %}
+				<p><input id="id_name" maxlength="70" name="name" type="text" value="'
+				+ name +'" readonly /></p>
+				<p><select id="id_user" name="user" style="display:none">
+				<option value="{{request.user.id}}" selected="selected">{{request.user}}</option>
+				</select></p>
+				<p><input id="id_longitude" name="longitude" step="0.0001" type="number" value="'
+				+ event.latLng.lng() + '" readonly /></p>
+				<p><input id="id_latitude" name="latitude" step="0.0001" type="number" value="'
+				+ event.latLng.lat() + '"/></p>
+				<p><textarea id="id_custDescription" maxlength="500" name="custDescription" readonly />
+					</textarea></p>
+				<p><input type=submit value="Save this place!">
+			';
+			$("#autoadd").innerHTML(form);
+		}
+
+
+		function addMarker(position) {
 			// adds a new marker and pushes it to the array
 			var marker = new google.maps.Marker({
 				position: position,
 				map: map,
-				title:name,
 			});
 			markers.push(marker);
 		}
 
 		function setMapAll(map) {
+			// sets all markers to specified map (null/map)
 			for (var i=0; i <= markers.length; i++) {
 				markers[i].setMap(map);
 				infoWindows[i].setMap(map);
 			};
 		}
 
+		function getName(position) {
+			// initiates a place search from given position
+			var topName;
+			var service = new google.maps.places.PlacesService(map);
+			var request = {
+				location:position,
+				radius:100,
+				type: [
+					amusement_park,aquarium,art_gallery,bakery,bar,beauty_salon,
+					book_store,bowling_alley,bus_station,cafe,campground,casino,
+					cemetery,city_hall,clothing_store,convenience_store,
+					department_store,museum,night_club,park,parking,pet_store,
+					restaurant,rv_park,school,shoe_store,shopping_mall,spa,
+					stadium,store,subway_station,train_station,university,zoo,
+					establishment,florist,food,gas_station,jewelery_store,library,
+					lodging,movie_theater
+				]
+			};
+			service.radarSearch(request,function(results, status){
+				// radar search callback
+				if (status === google.maps.places.PlacesServiceStatus.OK) {
+				    var topName = results[0].name;
+				} else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+					var topName = "Unknown";
+				} else {
+					alert(status);
+					return;
+				}
+			});
+			return topName;
+		}
+
+		function handleNoGeolocation(errorFlag) {
+				// display error alert about geolocation service and
+				// sets default location to LA
+				if (errorFlag === true) {
+					alert("Geolocation service failed.");
+				} else {
+					alert("Your browser doesn't support geolocation.");
+				}
+				location = losangeles;
+				map.setCenter(location);
+			}
+
 		google.maps.event.addDomListener(window, 'load', initialize);
-	<link rel="stylesheet" type='text/css' href="static/style.css" />
+	</script>
+	<link rel="stylesheet" type='text/css' href="{% static 'style.css' %}" />
 	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
 </head>
 
@@ -109,17 +186,24 @@
 		    </div><!--/.navbar-collapse -->
 	    </div>
 	</div>
-
+	
+	<!-- Sign up Jumbotron -->
 	{% if not loggedin %}
 	<div class="jumbotron">
       <div class="container" id="home-jumbotron">
         <h1>Welcome to pushpin'd!</h1>
-        <p>Looking for a better way to remember all the best places to eat, play, hang out, or just take in the view? What if you could do that and more with just a click ofa button. When you start using pushpin'd, it's easy to save, organize, and share all your favorite spots, anywhere in the world! Let pushpin'd do the work for you, so you can stop wondering where to go and start having more fun!</p>
+        <p>Looking for a better way to remember all the best places to eat, play, hang out, or just take in the view? What if you could do that and more with just a click of a button. When you start using pushpin'd, it's easy to save, organize, and share all your favorite spots, anywhere in the world! Let pushpin'd do the work for you, so you can stop wondering where to go and start having more fun!</p>
         <p><a class="btn btn-primary btn-lg" role="button" href='{% url "signup" %}'>Sign up! &raquo;</a></p>
       </div>
     </div>
+
+    <!-- Explore locations (alt. display for logged in users) -->
     {% else %}
-    <div id='map-canvas'>
+    <div id='map-canvas'></div>
+    <div id='autoadd-form'>
+    	<form id='autoadd' action='.' method="post">
+    	</form>
+    </div>
     {% endif %}
 
 </body>

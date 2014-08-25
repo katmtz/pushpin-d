@@ -105,3 +105,14 @@ body.home {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+/* EXPLORE/MAP CANVAS */
+#map-canvas {
+  width:100%;
+  height: 100%;
+}
+
+.autoadd-form {
+  background-color: #cfcfcf;
+  height: 30px;
+}
