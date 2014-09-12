@@ -59,20 +59,15 @@ def save(request, location_id):
 
 def savenew(request):
 	# saves a new location
-	print '**SAVENEW DEBUG LOG**'
-	print 'savenew called'
 	if request.method == 'POST':
 		form = LocationForm(request.POST)
-		print 'form set'
 		if form.is_valid():
 			newLocation = form.save()
-			print 'form saved'
-			print '**OK**'
+			print "form valid"
 			return HttpResponseRedirect(reverse('locationlib:detail', args=[newLocation.id]))
+		print 'form reset'
 		print 'form invalid'
-		print form
-		print '**OK**'
-		return render(request, 'locationlib/new.html', {'form': form})
+		return render(request, 'locationlib/new.html', {'form': form, 'request':request})
 	else:
 		form = LocationForm()
 		print 'form reset'

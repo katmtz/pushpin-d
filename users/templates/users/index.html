@@ -12,6 +12,8 @@
 		var map;
 		var markers = [];
 		var infoWindows = [];
+
+		var location_list = [];
 		
 		function initialize() {
 			// specify map init vars
@@ -28,11 +30,11 @@
 
 			console.log('var map set');
 			
-			// load location markers for all locations
+			// load location markers + location object for all locations
 
 			{% for location in location_list %}
 				position = new google.maps.LatLng(parseFloat('{{location.latitude}}'),parseFloat('{{location.longitude}}'));
-				name = "{{location.name}}"
+				name = "{{location.name}}";
 				addMarker(position,name);
 			{% endfor %}
 
@@ -59,7 +61,6 @@
 		}
 
 		google.maps.event.addDomListener(window, 'load', initialize);
-		console.log('DomListener Added')
 	</script>
 	<link rel="stylesheet" type='text/css' href="{% static 'users/style.css' %}" />
 	<link rel="stylesheet" type='text/css' href="{% static 'locationlib/bootstrap.min.css' %}" />
@@ -133,7 +134,7 @@
 				{% if location_list %}
 					{% for location in location_list %}
 						<a class="list-group-item" href="{% url 'locationlib:detail' location.id %}">
-							<div class="container" id="item-container">
+							<div class="location-container" id="{{location.id}}">
 								<h4 class="list-group-item-header">{{location.name}}</h4></li>
 								<p class="list-group-item-text">{{location.custDescription}}</p>
 							</div>

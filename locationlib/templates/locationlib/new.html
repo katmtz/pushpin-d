@@ -11,21 +11,49 @@
 </head>
 
 <body>
-	<div id='page-header'>
-		<h1><a href="{% url 'home' %}">Pushpin'd</h1>
-		<a href="{% url 'users:places' request.user.id %}">back to places</a>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	    <div class="container">
+	        <div class="navbar-header">
+	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            </button>
+	            <a class="navbar-brand" href="/">pushpin'd</a>
+	        </div>
+	        <div class="navbar-collapse collapse">
+		        <ul class="nav navbar-nav">
+		            <li><a href="{% url 'home' %}">Home</a></li>
+		            <li><a href="#about">About</a></li>
+		            <li><a href="#contact">Contact</a></li>
+	            	<li class="dropdown active">
+	            		<a href='#' class="dropdown-toggle" data-toggle="dropdown">You <span class="caret"></span></a>
+		            	<ul class="dropdown-menu" role="menu">
+			                <li><a href='{% url "users:profile" request.user.id %}'>Profile</a></li>
+			                <li><a href="{% url 'users:places' request.user.id %}">Your Places</a></li>
+			                <li><a href="{% url 'users:add' request.user.id %}">New Place</a></li>
+			                <li><a href="{% url 'users:edit' request.user.id  %}">Edit Profile</a></li>
+			            </ul>
+			        </li>
+		        </ul>
+            	<ul class="nav navbar-nav navbar-right">
+		    		<li><a href='{% url "logout" %}' >Log out</a></li>
+		    	</ul>
+		    </div><!--/.navbar-collapse -->
+	    </div>
 	</div>
 
 	<div id='new-location-form'>
 		<form action="{% url 'locationlib:savenew' %}" method="post">
 			{% csrf_token %}
-			<p><label for="id_name">Name:</label> <input id="id_name" maxlength="70" name="name" type="text" /></p>
+			<p><label for="id_name">Name:</label> <input id="id_name" maxlength="70" name="name" type="text" required autofocus/></p>
 			<p><select id="id_user" name="user" style="display:none">
 			<option value="{{request.user.id}}" selected="selected">{{request.user}}</option>
 			</select></p>
-			<p><label for="id_longitude">Longitude:</label> <input id="id_longitude" name="longitude" step="0.0001" type="number" /></p>
-			<p><label for="id_latitude">Latitude:</label> <input id="id_latitude" name="latitude" step="0.0001" type="number" /></p>
-			<p><label for="id_custDescription">Description:</label> <textarea id="id_custDescription" maxlength="500" name="custDescription" /></textarea></p>
+			<p><label for="id_longitude">Longitude:</label> <input id="id_longitude" name="longitude" step="0.0001" type="number" required /></p>
+			<p><label for="id_latitude">Latitude:</label> <input id="id_latitude" name="latitude" step="0.0001" type="number" required /></p>
+			<p><label for="id_custDescription">Description:</label> <textarea id="id_custDescription" maxlength="500" name="custDescription" required/></textarea></p>
 
 			<input type='submit' value='Save'>
 		</form>
